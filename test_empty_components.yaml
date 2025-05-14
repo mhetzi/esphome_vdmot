@@ -1,5 +1,5 @@
 # this configuration file has all empty components set up.
-# use 'esphome compile test_empty.yaml' to build. 
+# use 'esphome compile test_empty_components.yaml' to build. 
 
 packages:
   device: !include device.yaml # include our test device setup

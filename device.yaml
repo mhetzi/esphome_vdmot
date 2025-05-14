@@ -1,5 +1,4 @@
 # this is a simple test device setup that's used to compile and test the examples
-
 esphome:
     name: components_test
     build_path: build/components_test
@@ -8,6 +7,8 @@ esp32:
   board: esp32dev
   framework:
     type: esp-idf
+
+logger:
 
 external_components:
   - source:
