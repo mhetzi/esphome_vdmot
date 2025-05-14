@@ -1,7 +1,35 @@
-# this is just a simple test device setup that's used to compile and test the examples
+# this is a simple test device setup that's used to compile and test the examples
 
 esphome:
-    name: custom_components_test
-    platform: ESP8266
-    board: nodemcuv2
-    build_path: .build/custom_components_test
+    name: components_test
+    build_path: build/components_test
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components:
+      - empty_binary_output
+      - empty_binary_sensor
+      - empty_component
+      - empty_compound_sensor
+      - empty_cover
+      - empty_fan
+      - empty_float_output
+      - empty_i2c_component
+      - empty_i2c_sensor
+      - empty_light
+      - empty_sensor
+      - empty_sensor_hub
+      - empty_spi_component
+      - empty_spi_sensor
+      - empty_switch
+      - empty_text_sensor
+      - empty_uart_component
+      - empty_uart_sensor
+    refresh: always
