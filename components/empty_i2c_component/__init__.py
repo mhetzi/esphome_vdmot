@@ -5,8 +5,6 @@ from esphome.const import CONF_ID
 
 DEPENDENCIES = ["i2c"]
 
-CONF_I2C_ADDR = 0x01
-
 empty_i2c_component_ns = cg.esphome_ns.namespace("empty_i2c_component")
 EmptyI2CComponent = empty_i2c_component_ns.class_(
     "EmptyI2CComponent", cg.Component, i2c.I2CDevice
@@ -19,7 +17,7 @@ CONFIG_SCHEMA = (
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
-    .extend(i2c.i2c_device_schema(CONF_I2C_ADDR))
+    .extend(i2c.i2c_device_schema(0x01))
 )
 
 

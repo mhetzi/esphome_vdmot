@@ -22,6 +22,7 @@ external_components:
       - empty_cover
       - empty_fan
       - empty_float_output
+      - empty_gpio_component
       - empty_i2c_component
       - empty_i2c_sensor
       - empty_light
