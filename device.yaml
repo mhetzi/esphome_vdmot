@@ -15,6 +15,7 @@ external_components:
       type: local
       path: components
     components:
+      - empty_automation
       - empty_binary_output
       - empty_binary_sensor
       - empty_component

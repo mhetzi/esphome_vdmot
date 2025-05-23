@@ -4,6 +4,23 @@
 packages:
   device: !include device.yaml # include our test device setup
 
+interval:
+  - interval: 3s
+    then:
+      - if:
+          condition:
+            - empty_automation.component_on: empty_automation_1
+          then:
+            - logger.log: "empty_automation.component_on"
+            - empty_automation.set_state:
+                id: empty_automation_1
+                state: false
+          else:
+            - logger.log: "empty_automation.component_off"
+            - empty_automation.set_state:
+                id: empty_automation_1
+                state: true
+
 sensor:
   - platform: empty_sensor
     name: Empty sensor
@@ -70,6 +87,11 @@ text_sensor:
 cover:
   platform: empty_cover
   name: Empty cover
+
+empty_automation:
+  id: empty_automation_1
+  on_state:
+    - logger.log: "Empty automation on_state triggered"
 
 empty_component:
   id: empty_component_1
