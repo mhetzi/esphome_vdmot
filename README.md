@@ -1,4 +1,9 @@
-![ESPHome logo](logo-text.svg)
+<a href="https://esphome.io/">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="./logo-text-on-dark.svg", alt="ESPHome Logo">
+    <img src="./logo-text-on-light.svg" alt="ESPHome Logo">
+  </picture>
+</a>
 
 # ESPHome starter components
 
