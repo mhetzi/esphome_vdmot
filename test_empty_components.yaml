@@ -4,125 +4,99 @@
 packages:
   device: !include device.yaml  # include our test device setup
 
-interval:
-  - interval: 3s
-    then:
-      - if:
-          condition:
-            - empty_automation.component_on: empty_automation_1
-          then:
-            - logger.log: "empty_automation.component_on"
-            - empty_automation.set_state:
-                id: empty_automation_1
-                state: false
-          else:
-            - logger.log: "empty_automation.component_off"
-            - empty_automation.set_state:
-                id: empty_automation_1
-                state: true
-
-sensor:
-  - platform: empty_sensor
-    name: Empty sensor
-
-  - platform: empty_i2c_sensor
-    name: Empty I2C sensor
-
-  - platform: empty_spi_sensor
-    name: Empty SPI sensor
-    cs_pin: 15
-
-  - platform: empty_uart_sensor
-    name: Empty UART sensor
-
-  - platform: empty_compound_sensor
-    sensor1:
-      name: Sensor 1
-    sensor2:
-      name: Sensor 2
-    sensor3:
-      name: Sensor 3
-
-  - platform: empty_sensor_hub
-    name: Sensor for empty sensor hub
-    empty_sensor_hub_id: empty_sensor_hub_1
-
-binary_sensor:
-  - platform: empty_binary_sensor
-    name: Empty binary sensor
-
-  - platform: empty_sensor_hub
-    name: Binary sensor for empty sensor hub
-    empty_sensor_hub_id: empty_sensor_hub_1
-
-output:
-  - platform: empty_binary_output
-    id: empty_binary_output_1
-
-  - platform: empty_float_output
-    id: empty_float_output_1
-
-light:
-  - platform: empty_light
-    name: Empty light
-    output: empty_float_output_1
-
-switch:
-  - platform: empty_switch
-    name: Empty switch
-
-fan:
-  - platform: empty_fan
-    name: Empty fan
-    output: empty_binary_output_1
-
-text_sensor:
-  - platform: empty_text_sensor
-    name: Empty text sensor
-
-  - platform: empty_sensor_hub
-    name: Text sensor for empty sensor hub
-    empty_sensor_hub_id: empty_sensor_hub_1
-
-cover:
-  platform: empty_cover
-  name: Empty cover
-
-empty_automation:
-  id: empty_automation_1
-  on_state:
-    - logger.log: "Empty automation on_state triggered"
-
-empty_component:
-  id: empty_component_1
 
 i2c:
-  sda: 21
-  scl: 22
+ sda: 22
+ scl: 23
+ scan: True
+ id: bus_a
+ frequency: 50kHz
 
-empty_gpio_component:
-  id: empty_gpio_component_1
-  pin: 13
+output:
+  - platform: template
+    id: mixingOutput
+    type: float
+    power_supply: vorlauf_pumpe
+    write_action:
+#      - logger.log:
+#          format: "Subtrahiere vorlauf limit %.1f von  PID %.1f weg."
+#          args: [ 'id(overlay_percentage)', 'state' ]
+      - lambda: |-
+            id(climate_percentage) = state;
+            float level = state - id(overlay_percentage);
+            //ESP_LOGD("mixingOutput", "IMPLEMENT SET LEVEL TO VALVE");
+            auto call = id(valve_1).make_call();
+            call.set_position(level);
+            call.perform();
+  - platform: gpio
+    pin: 17
+    id: 'test_out'
+    power_supply: vorlauf_pumpe
+  
+  - platform: gpio
+    pin: 13
+    id: 'pin_valve_open'
+    inverted: false
+  - platform: gpio
+    pin: 14
+    id: 'pin_valve_close'
+    
 
-empty_i2c_component:
-  id: empty_i2c_component_1
-  address: 0x01
+text_sensor:
+  - platform: template
+    name: "Temperature Quelle"
+    id: "temp_source"
 
-uart:
-  tx_pin: 17
-  rx_pin: 16
-  baud_rate: 9600
 
-empty_uart_component:
-  id: empty_uart_component_1
+one_wire:
+  - platform: gpio
+    pin: 21
 
-spi:
-  clk_pin: 18
-  miso_pin: 19
+vdmot:
+  ina219_id: ina_component
+  output_close_id: pin_valve_close
+  output_open_id: pin_valve_open
+  ina219_current_id: ina_current
+  max_motor_current: 0.06
+  id: vdmot_hubb
+  valve:
+    name: Fußbodenheizung Ventil
+    id: valve_1
+  calibrate:
+    name: "Kalibriere Ventil"
 
-empty_spi_component:
-  id: empty_spi_component_1
-  cs_pin: 5
-
-empty_sensor_hub:
-  id: empty_sensor_hub_1
+sensor:
+  - platform: ina219
+    address: 0x40
+    id: ina_component
+    shunt_resistance: 0.1 ohm
+    current:
+      name: "INA219 Current"
+      id: ina_current
+      filters:
+        - delta: 0.00050
+    max_voltage: 3.3V
+    max_current: 0.4A
+    update_interval: 10s
+  - platform: dallas_temp
+    address: 0x4D03173058DCFF28
+    name: "Vorlauf Temperatur"
+    update_interval: 15s
+    id: vorlauf_temp
+    on_value:
+      then:
+        - lambda: |-
+            #define in_min 45.0f
+            #define in_max 55.5f
+            #define out_min 0.0f
+            #define out_max 1.0f
+            // map  function
+            float f =  (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+            id(overlay_percentage) = f < 0.0f ? 0.0f : f;
+            id(mixingOutput).set_level( id(climate_percentage) );
+    filters:
+      - delta: 0.2
+      - lambda: |-
+          if (x < 0.00 || x > 100)
+            return {};
+          return x;

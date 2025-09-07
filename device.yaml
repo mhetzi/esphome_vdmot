@@ -12,17 +12,8 @@ logger:
 
 external_components:
   - source:
-      type: local
-      path: components
-    components:
-      - empty_binary_sensor
-      - empty_component
-      - empty_sensor
-      - empty_sensor_hub
-      - empty_spi_component
-      - empty_spi_sensor
-      - empty_switch
-      - empty_text_sensor
-      - empty_uart_component
-      - empty_uart_sensor
+      type: git
+      url: https://github.com/mhetzi/esphome_vdmot.git
+    components: [ vdmot ]
     refresh: always
+

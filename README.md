@@ -16,6 +16,12 @@ The necessary section of the device YAML not everything is needed
 </p>
 
 ```
+external_components:
+  - source:
+      type: git
+      url: https://github.com/mhetzi/esphome_vdmot.git
+    components: [ vdmot ]
+
 # Pin configuration for both directions
 output:  
   - platform: gpio
