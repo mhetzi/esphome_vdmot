@@ -24,7 +24,6 @@ protected:
 
 private:
   VdmotHub *parent_{nullptr};
-
 };
 
 } //namespace empty_switch
