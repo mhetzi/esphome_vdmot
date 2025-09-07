@@ -5,6 +5,16 @@ packages:
   device: !include device.yaml  # include our test device setup
 
 
+globals:
+  - id: overlay_percentage
+    type: float
+    restore_value: no
+    initial_value: '0'
+  - id: climate_percentage
+    type: float
+    restore_value: no
+    initial_value: '0'
+
 i2c:
  sda: 22
  scl: 23
@@ -100,3 +110,14 @@ sensor:
           if (x < 0.00 || x > 100)
             return {};
           return x;
+
+
+# Vorlauf Pumpe nur einschlaten wenn wir den Fußboden heizen wollen
+power_supply:
+  - id: 'vorlauf_pumpe'
+    pin:
+      number: 16 #16 is real pin
+      inverted: False
+      mode: OUTPUT
+    enable_time: 1s
+    keep_on_time: 2s
