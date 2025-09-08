@@ -68,6 +68,8 @@ vdmot:
     id: valve_1
   calibrate:
     name: "Kalibriere Ventil"
+  maintenance:
+    name: "Wartung durchführen"
 
 sensor:
   - platform: ina219
