@@ -4,7 +4,6 @@
 packages:
   device: !include device.yaml  # include our test device setup
 
-
 globals:
   - id: overlay_percentage
     type: float
@@ -16,11 +15,11 @@ globals:
     initial_value: '0'
 
 i2c:
- sda: 22
- scl: 23
- scan: True
- id: bus_a
- frequency: 50kHz
+  sda: 22
+  scl: 23
+  scan: True
+  id: bus_a
+  frequency: 50kHz
 
 output:
   - platform: template
@@ -28,9 +27,6 @@ output:
     type: float
     power_supply: vorlauf_pumpe
     write_action:
-#      - logger.log:
-#          format: "Subtrahiere vorlauf limit %.1f von  PID %.1f weg."
-#          args: [ 'id(overlay_percentage)', 'state' ]
       - lambda: |-
             id(climate_percentage) = state;
             float level = state - id(overlay_percentage);
@@ -42,7 +38,7 @@ output:
     pin: 17
     id: 'test_out'
     power_supply: vorlauf_pumpe
-  
+
   - platform: gpio
     pin: 13
     id: 'pin_valve_open'
@@ -50,13 +46,11 @@ output:
   - platform: gpio
     pin: 14
     id: 'pin_valve_close'
-    
 
 text_sensor:
   - platform: template
     name: "Temperature Quelle"
     id: "temp_source"
-
 
 one_wire:
   - platform: gpio
@@ -111,12 +105,11 @@ sensor:
             return {};
           return x;
 
-
-# Vorlauf Pumpe nur einschlaten wenn wir den Fußboden heizen wollen
+#  Vorlauf Pumpe nur einschlaten wenn wir den Fußboden heizen wollen
 power_supply:
   - id: 'vorlauf_pumpe'
     pin:
-      number: 16 #16 is real pin
+      number: 16  #  16 is real pin
       inverted: False
       mode: OUTPUT
     enable_time: 1s
