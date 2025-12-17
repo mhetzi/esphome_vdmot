@@ -1,0 +1,60 @@
+# this is a simple test device setup that's used to compile and test the examples
+esphome:
+  name: components_test
+  build_path: build/components_test
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+logger:
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [vdmot]
+
+i2c:
+  sda: 22
+  scl: 23
+  scan: True
+  id: bus_a
+  frequency: 50kHz
+
+vdmot:
+  ina219_id: ina_component
+  output_close_id: pin_valve_close
+  output_open_id: pin_valve_open
+  ina219_current_id: ina_current
+  max_motor_current: 0.065
+  id: vdmot_hubb
+  valve:
+    name: Fußbodenheizung Ventil
+    id: valve_1
+  calibrate:
+    name: "Kalibriere Ventil"
+  maintenance:
+    name: "Wartung durchführen"
+  status:
+    name: "Ventil Status"
+
+sensor:
+  - platform: ina219
+    address: 0x40
+    id: ina_component
+    shunt_resistance: 0.1 ohm
+    current:
+      name: "INA219 Current"
+      id: ina_current
+      filters:
+        - delta: 0.00050
+    max_voltage: 3.3V
+    max_current: 0.4A
+    update_interval: 10s
+  - platform: dallas_temp
+    address: 0x4D03173058DCFF28
+    name: "Vorlauf Temperatur"
+    update_interval: 15s
+    id: vorlauf_temp
