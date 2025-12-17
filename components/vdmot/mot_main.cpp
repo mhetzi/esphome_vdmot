@@ -58,7 +58,7 @@ void VdmotHub::loop() {
         return;
     }
 
-    uint64_t now = millis();
+    uint64_t now = esphome::millis();
     if (now - this->last_loop_ < 100 && this->flags_.state != VDMOT_STATE_IDLE) {
         return;
     }
@@ -262,7 +262,7 @@ void VdmotHub::set_position(float position, bool force) {
     this->current_position_ = position;
 
     ESP_LOGD(TAG, "Moving from %.2f to %.2f, time: %d ms, force?: %d", this->last_position_, this->current_position_, this->current_move_time_, force);
-    this->move_start_time_ = millis();
+    this->move_start_time_ = esphome::millis();
     this->flags_.state = VDMOT_STATE_MOVING;
     if (diff > 0) {
         this->setOutputs(false, true);

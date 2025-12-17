@@ -1,5 +1,6 @@
 #pragma once
 
+#include "esphome/core/hal.h"
 #include "esphome/core/component.h"
 #include "esphome/core/log.h"
 #include "esphome/components/ina219/ina219.h"
